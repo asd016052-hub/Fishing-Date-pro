@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>釣魚日誌</title>
+<link rel="manifest" href="manifest.json"/>
+<link rel="stylesheet" href="style.css"/>
+<meta name="theme-color" content="#0f766e"/>
+<link rel="apple-touch-icon" href="icon.svg"/>
+</head>
+<body>
+<header><h1>釣魚日誌</h1><p>釣點資料庫・月份分析・漁獲排行</p></header>
+<main>
+<section id="homeView">
+  <div class="hero-card">
+    <h2>選擇釣點</h2>
+    <p>先選本島或離島，再選地區與釣點。紀錄會自動歸納到該釣點資料庫。</p>
+    <div class="two-buttons">
+      <button class="big-btn" type="button" onclick="showAreas('本島')">本島</button>
+      <button class="big-btn" type="button" onclick="showAreas('離島')">離島</button>
+    </div>
+  </div>
+  <section class="card">
+    <h2>快速查看</h2>
+    <button type="button" onclick="showRecordsView()">全部紀錄</button>
+    <button type="button" onclick="showMonthView()">月份分析</button>
+    <button type="button" onclick="showRankingView()">排行榜</button>
+  </section>
+</section>
+
+<section id="areaView" class="hidden">
+  <button class="back" type="button" onclick="showHome()">← 回首頁</button>
+  <h2 id="areaTitle"></h2>
+  <div id="areaButtons" class="button-grid"></div>
+</section>
+
+<section id="spotView" class="hidden">
+  <button class="back" type="button" onclick="backToAreas()">← 回地區</button>
+  <h2 id="spotTitle"></h2>
+  <div id="spotButtons" class="button-grid"></div>
+</section>
+
+<section id="formView" class="hidden">
+  <button class="back" type="button" onclick="backToSpots()">← 回釣點</button>
+  <section class="card">
+    <h2 id="recordFormTitle">新增紀錄</h2>
+    <div class="selected-path" id="selectedPath"></div>
+    <label>漁獲照片<input id="photo" type="file" accept="image/*"/></label>
+    <img id="preview" class="preview hidden" alt="照片預覽"/>
+    <div class="grid">
+      <label>日期<input id="date" type="date"/></label>
+      <label>時間<input id="time" type="time"/></label>
+    </div>
+    <label>釣法<button class="picker-button" type="button" data-picker="method">請選擇</button><input id="method" type="hidden" /></label>
+<label>釣場<button class="picker-button" type="button" data-picker="spotType">請選擇</button><input id="spotType" type="hidden" /></label>
+<label>釣竿<button class="picker-button" type="button" data-picker="rod">請選擇</button><input id="rod" type="hidden" /></label>
+<label>卷線器<button class="picker-button" type="button" data-picker="reel">請選擇</button><input id="reel" type="hidden" /></label>
+<label>浮標<button class="picker-button" type="button" data-picker="floatType">請選擇</button><input id="floatType" type="hidden" /></label>
+<label>浮標號數<button class="picker-button" type="button" data-picker="floatSize">請選擇</button><input id="floatSize" type="hidden" /></label>
+<label>絲腳<button class="picker-button" type="button" data-picker="foot">請選擇</button><input id="foot" type="hidden" /></label>
+<label>母線<button class="picker-button" type="button" data-picker="mainLine">請選擇</button><input id="mainLine" type="hidden" /></label>
+<label>子線號數<button class="picker-button" type="button" data-picker="leader">請選擇</button><input id="leader" type="hidden" /></label>
+<label>鈎子<button class="picker-button" type="button" data-picker="hook">請選擇</button><input id="hook" type="hidden" /></label>
+<label>鈎子號數<button class="picker-button" type="button" data-picker="hookSize">請選擇</button><input id="hookSize" type="hidden" /></label>
+<label>路亞<button class="picker-button" type="button" data-picker="lure">請選擇</button><input id="lure" type="hidden" /></label>
+<label>釣餌<button class="picker-button" type="button" data-picker="bait">請選擇</button><input id="bait" type="hidden" /></label>
+<label>潮汐<button class="picker-button" type="button" data-picker="tide">尚未填寫</button><input id="tide" type="hidden" /></label>
+<label>重量單位<button class="picker-button" type="button" data-picker="weightUnit">請選擇</button><input id="weightUnit" type="hidden" /></label>
+    <div class="grid">
+      <label>魚種／漁獲<input id="catchName" placeholder="例如：紅沙、臭肚、黑格"/></label>
+      <label>數量<input id="count" inputmode="numeric" type="number" min="1" value="1"/></label>
+    </div>
+    <label>魚的重量<input id="weight" inputmode="decimal" placeholder="例如：1.2"/></label>
+    <div class="grid">
+      <label>緯度<input id="lat" inputmode="decimal" placeholder="可自動定位"/></label>
+      <label>經度<input id="lng" inputmode="decimal" placeholder="可自動定位"/></label>
+    </div>
+    <button id="useLocation" type="button">抓目前位置</button>
+    <label>備註<textarea id="note" rows="4" placeholder="魚訊、誘餌、咬鉛、釣棚、天氣..."></textarea></label>
+    <button id="save" class="primary" type="button">儲存到此釣點</button>
+  </section>
+</section>
+
+<section id="recordsView" class="hidden">
+  <button class="back" type="button" onclick="showHome()">← 回首頁</button>
+  <section class="card">
+    <h2>紀錄查詢</h2>
+    <div class="grid">
+      <label>年份<input id="filterYear" type="number" placeholder="2026"/></label>
+      <label>月份<input id="filterMonth" type="number" min="1" max="12" placeholder="4"/></label>
+    </div>
+    <label>釣點搜尋<input id="filterSpot" placeholder="例如：馬南"/></label>
+    <label>魚種搜尋<input id="filterFish" placeholder="例如：紅沙"/></label>
+    <button type="button" onclick="clearFilters()">清除搜尋</button>
+  </section>
+  <div id="recordsList"></div>
+</section>
+
+<section id="monthView" class="hidden">
+  <button class="back" type="button" onclick="showHome()">← 回首頁</button>
+  <section class="card">
+    <h2>月份分析</h2>
+    <div class="grid">
+      <label>年份<input id="monthYear" type="number" placeholder="2026"/></label>
+      <label>月份<input id="monthMonth" type="number" min="1" max="12" placeholder="4"/></label>
+    </div>
+    <label>指定釣點，可留空<input id="monthSpot" placeholder="例如：馬南"/></label>
+    <button class="primary" type="button" onclick="renderMonthAnalysis()">分析</button>
+  </section>
+  <div id="monthResult"></div>
+</section>
+
+<section id="rankingView" class="hidden">
+  <button class="back" type="button" onclick="showHome()">← 回首頁</button>
+  <section class="card"><h2>排行榜</h2><div id="rankingResult"></div></section>
+</section>
+</main>
+
+<div id="detailOverlay" class="detail-overlay hidden">
+  <div class="detail-card">
+    <button class="detail-close" type="button" onclick="closeDetail()">×</button>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<div id="pickerOverlay" class="picker-overlay hidden">
+  <div class="picker-sheet">
+    <div class="picker-top">
+      <button id="pickerCancel" class="picker-small" type="button">取消</button>
+      <div id="pickerTitle" class="picker-title">選擇</div>
+      <button id="pickerDone" class="picker-small done" type="button">完成</button>
+    </div>
+    <div class="wheel-wrap"><div class="wheel-highlight"></div><div id="wheel" class="wheel"></div></div>
+  </div>
+</div>
+<script src="app.js"></script>
+</body></html>
